@@ -509,9 +509,9 @@ public final class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_lstSongsFoundMouseClicked
 
     private void clearList(JList listToFill) {
-        DefaultListModel listmodel=new DefaultListModel();
-        listToFill = new JList(listmodel);
+        DefaultListModel listmodel = new DefaultListModel();
         listmodel.clear();
+        listToFill.setModel(listmodel);
     }
     
     /**
