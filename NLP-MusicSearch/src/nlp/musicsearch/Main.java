@@ -36,6 +36,7 @@ public final class Main extends javax.swing.JFrame {
     public Main() {
         initComponents();
         
+        
         songSmoothedProb.put(theDefault, 1.0);
         loadSerializedObjects();
         fillList(jList2, theSongMap.keySet().toArray());
@@ -197,6 +198,7 @@ public final class Main extends javax.swing.JFrame {
         jScrollPane2.setViewportView(jTextPane1);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Music Search");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
