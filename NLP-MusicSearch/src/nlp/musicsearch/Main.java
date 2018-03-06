@@ -13,17 +13,18 @@ import java.util.Map;
 import java.util.Scanner;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
+import static javax.swing.JOptionPane.showMessageDialog;
 
 /**
  *
- * @author B-29
+ * @author Jsaon Hall
  */
 public final class Main extends javax.swing.JFrame {
 
     private final String filesongs = "songs.ser";
     private final String filewords = "words.ser";
     private Map<String, File> theSongMap;
-    private Map<String, Double> songSmoothedProb;
+    private Map<String, Double> songSmoothedProb = new HashMap<>();
     private final File start = new File("src\\nlp\\musicsearch");
     private WordLib theWordLibrary;
     private final double theLambda = 0.75;
@@ -35,6 +36,7 @@ public final class Main extends javax.swing.JFrame {
     public Main() {
         initComponents();
         
+        songSmoothedProb.put(theDefault, 1.0);
         loadSerializedObjects();
         fillList(jList2, theSongMap.keySet().toArray());
         fillList(lstTraindSongs, theSongMap.keySet().toArray());
@@ -416,6 +418,35 @@ public final class Main extends javax.swing.JFrame {
                 .getSongWordCount(song)));
     }//GEN-LAST:event_lstTraindSongsMouseClicked
 
+    private Map<String, Double> mergeMaps (Map<String, Double> m1
+            , Map<String, Double> m2) {
+        final Map<String, Double> temp = new HashMap<>();
+        
+        double s1 = m1.get(theDefault);
+        double s2 = m2.get(theDefault);
+        
+        temp.putAll(m1);
+        
+        temp.keySet().stream().forEach((key) -> {
+            if (m2.containsKey(key)) {
+                if (!key.equals(theDefault)) {
+                    temp.replace(key, temp.get(key) * m2.get(key));
+                }
+            } else {
+                temp.replace(key, temp.get(key) * s2);
+            }
+        });
+        
+        m2.keySet().stream().filter((key) -> (!temp.containsKey(key)))
+                .forEach((key) -> {
+            temp.put(key, s1 * m2.get(key));
+        });
+        
+        temp.replace(theDefault, s1 * s2);
+        
+        return temp;
+    }
+    
     private Map<String, Double> getHashMap(String myWord) {
         final Map<String, Double> temp = new HashMap<>();
         final double smooth = (1 - theLambda) * theWordLibrary.getWordProb(myWord);
@@ -431,18 +462,25 @@ public final class Main extends javax.swing.JFrame {
     }
     
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
-        // TODO add your handling code here:
         Scanner search = new Scanner(txtSearch.getText());
+        int wordCount = 0;
         
         String currentWord;
-        String[] songList;
-        int count = 0;
         
         while (search.hasNext()) {
+            wordCount++;
             currentWord = search.next();
+            if (theWordLibrary.hasWord(currentWord)) {
+                songSmoothedProb = mergeMaps(songSmoothedProb
+                    , getHashMap(currentWord));
+            } else {
+                if (wordCount == 1) {
+                    showMessageDialog(null, 
+                            "I am sorry but no song contains the word - " 
+                                    + currentWord);
+                }
+            }
         }
-
-        
     }//GEN-LAST:event_jButton1MouseClicked
 
     /**

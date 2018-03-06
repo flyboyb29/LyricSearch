@@ -64,7 +64,7 @@ public class WordLib implements Serializable {
     }
     
     public double getWordProb(String myWord) {
-        return theWordInSong.get(myWord).getProbWordFound();
+        return theWordInSong.get(myWord.toUpperCase()).getProbWordFound();
     }
     
     /**
@@ -145,9 +145,7 @@ public class WordLib implements Serializable {
                 numWords++;
                 myWord = word.next();
                 myWord = checkWord(myWord);
-                //if (myWord.endsWith(",")) {
-                //    myWord = myWord.substring(0, myWord.length() - 1);
-                //}
+                myWord= myWord.toUpperCase();
                 
                 if (theWordInSong.containsKey(myWord)) {
                     theWordInSong.get(myWord)
@@ -181,7 +179,7 @@ public class WordLib implements Serializable {
      * @return a list of songs
      */
     public String[] getSongList(String myWord) {
-        return theWordInSong.get(myWord).getSongList();
+        return theWordInSong.get(myWord.toUpperCase()).getSongList();
     }
 
     /**
@@ -193,6 +191,10 @@ public class WordLib implements Serializable {
      * @return the probability that the specific word is in the specific song
      */
     public double getWordSongProb(String myWord, String mySong) {
-        return theWordInSong.get(myWord).getProbFoundInSong(mySong);
+        return theWordInSong.get(myWord.toUpperCase()).getProbFoundInSong(mySong);
+    }
+
+    public boolean hasWord(String myWord) {
+        return theWordInSong.containsKey(myWord.toUpperCase());
     }
 }
