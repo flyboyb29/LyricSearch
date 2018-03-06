@@ -44,6 +44,8 @@ public final class Main extends javax.swing.JFrame {
         txtSongCount.setText(String.valueOf(theSongMap.size()));
         txtWordCount.setText(String.valueOf(theWordLibrary
                 .getTotalWordCount()));
+        
+        System.out.println(theSongMap.size());
     }
     
     
@@ -492,6 +494,8 @@ public final class Main extends javax.swing.JFrame {
                 }
             }
         }
+        
+        songSmoothedProb.remove(theDefault);
         
         if (!failed) {
             fillList(lstSongsFound, songSmoothedProb.keySet().toArray());
