@@ -46,6 +46,7 @@ public final class Main extends javax.swing.JFrame {
                 .getTotalWordCount()));
     }
     
+    
     /**
      * 
      */
@@ -207,6 +208,11 @@ public final class Main extends javax.swing.JFrame {
             }
         });
 
+        lstSongsFound.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lstSongsFoundMouseClicked(evt);
+            }
+        });
         jScrollPane4.setViewportView(lstSongsFound);
 
         txtChoosenSong.setColumns(20);
@@ -464,8 +470,12 @@ public final class Main extends javax.swing.JFrame {
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         Scanner search = new Scanner(txtSearch.getText());
         int wordCount = 0;
+        boolean failed = false;
         
         String currentWord;
+        
+        resetMap();
+        clearList(lstSongsFound);
         
         while (search.hasNext()) {
             wordCount++;
@@ -474,15 +484,36 @@ public final class Main extends javax.swing.JFrame {
                 songSmoothedProb = mergeMaps(songSmoothedProb
                     , getHashMap(currentWord));
             } else {
-                if (wordCount == 1) {
+                if (wordCount == 1 && !search.hasNext()) {
                     showMessageDialog(null, 
                             "I am sorry but no song contains the word - " 
                                     + currentWord);
+                    failed = true;
                 }
             }
         }
+        
+        if (!failed) {
+            fillList(lstSongsFound, songSmoothedProb.keySet().toArray());
+        }
     }//GEN-LAST:event_jButton1MouseClicked
 
+    private void resetMap() {
+        songSmoothedProb = new HashMap<>();
+        songSmoothedProb.put(theDefault, 1.0);
+    }
+    
+    private void lstSongsFoundMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lstSongsFoundMouseClicked
+        txtChoosenSong.setText(readFile(theSongMap.get
+            (lstSongsFound.getSelectedValue().toString())));
+    }//GEN-LAST:event_lstSongsFoundMouseClicked
+
+    private void clearList(JList listToFill) {
+        DefaultListModel listmodel=new DefaultListModel();
+        listToFill = new JList(listmodel);
+        listmodel.clear();
+    }
+    
     /**
      * @param args the command line arguments
      */
