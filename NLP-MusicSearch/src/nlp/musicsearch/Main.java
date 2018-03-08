@@ -14,6 +14,7 @@ import java.util.Scanner;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import static javax.swing.JOptionPane.showMessageDialog;
+import javax.swing.JTextArea;
 
 /**
  *
@@ -36,7 +37,6 @@ public final class Main extends javax.swing.JFrame {
     public Main() {
         initComponents();
         
-        
         songSmoothedProb.put(theDefault, 1.0);
         loadSerializedObjects();
         fillList(jList2, theSongMap.keySet().toArray());
@@ -51,9 +51,9 @@ public final class Main extends javax.swing.JFrame {
     
     
     /**
-     * 
+     * loadSerializedObjects: loads the serialized objects to use instead of re-training
      */
-    public void loadSerializedObjects() {
+    private void loadSerializedObjects() {
         // Deserialization
         try {   
             try ( // Reading the object from a file
@@ -84,6 +84,9 @@ public final class Main extends javax.swing.JFrame {
 
     }
     
+    /**
+     * preTrain: sends the songs that have been loaded in the song map to train theWordLibrary
+     */
     private void preTrain() {
         theSongMap.keySet().stream().forEach((key) -> {
             theWordLibrary.trainSong(key, readFile(theSongMap.get(key)));
@@ -105,7 +108,7 @@ public final class Main extends javax.swing.JFrame {
     }
     
     /**
-     * A helper method to read in a file.
+     *readFile: A helper method to read in a file.
      * 
      * @param theInput The file that we want to read in.
      * @return A string that represents the file that we just read in.
@@ -132,7 +135,7 @@ public final class Main extends javax.swing.JFrame {
     }
     
     /**
-     * used to load all of the songs into the map that contains there name and
+     * loadSongs: used to load all of the songs into the map that contains there name and
      * file location if it has not been saved before.
      */
     private void loadSongs() {
@@ -305,12 +308,6 @@ public final class Main extends javax.swing.JFrame {
 
         jLabel3.setText("Song Count:");
 
-        txtSongCount.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtSongCountActionPerformed(evt);
-            }
-        });
-
         jLabel4.setText("Word Count:");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -388,6 +385,7 @@ public final class Main extends javax.swing.JFrame {
     private void jList2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jList2MouseClicked
         txtLyrics.setText(readFile(theSongMap.get
             (jList2.getSelectedValue().toString())));
+        txtLyrics.setCaretPosition(0);
     }//GEN-LAST:event_jList2MouseClicked
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -416,18 +414,25 @@ public final class Main extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_formWindowClosing
 
-    private void txtSongCountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSongCountActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtSongCountActionPerformed
-
     private void lstTraindSongsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lstTraindSongsMouseClicked
         
         String song = lstTraindSongs.getSelectedValue().toString();
         txtWordInfo.setText(theWordLibrary.getSongInfo(song));
         txtWordCount.setText(String.valueOf(theWordLibrary
                 .getSongWordCount(song)));
+        txtWordInfo.setCaretPosition(0);
     }//GEN-LAST:event_lstTraindSongsMouseClicked
 
+    /**
+     * mergeMaps: Merges two map into one map by first combining what the two maps have in common
+     * followed by adding the rest of what's in the first map with the the default for smoothing
+     * and then puts all of the rest of the second map into it with the default of the first map
+     * for smoothing.
+     * 
+     * @param m1 the first map of songs title and probability that the word is seen
+     * @param m2 the second map of songs title and probability that the word is seen
+     * @return a map containing the merged songs title and probabilities
+     */
     private Map<String, Double> mergeMaps (Map<String, Double> m1
             , Map<String, Double> m2) {
         final Map<String, Double> temp = new HashMap<>();
@@ -457,6 +462,13 @@ public final class Main extends javax.swing.JFrame {
         return temp;
     }
     
+    /**
+     * getHashMap: Gets a map that contains the songs title and probability that the specific
+     * word happens in that songs title.
+     * 
+     * @param myWord is the word that we are searching to see we know about
+     * @return a map of songs titles and probabilities that the word is seen
+     */
     private Map<String, Double> getHashMap(String myWord) {
         final Map<String, Double> temp = new HashMap<>();
         final double smooth = (1 - theLambda) * theWordLibrary.getWordProb(myWord);
@@ -479,7 +491,7 @@ public final class Main extends javax.swing.JFrame {
         String currentWord;
         
         resetMap();
-        clearList(lstSongsFound);
+        clearList(lstSongsFound, txtChoosenSong);
         
         while (search.hasNext()) {
             wordCount++;
@@ -504,6 +516,9 @@ public final class Main extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton1MouseClicked
 
+    /**
+     * resetMap: resets a map to reuse it for another round.
+     */
     private void resetMap() {
         songSmoothedProb = new HashMap<>();
         songSmoothedProb.put(theDefault, 1.0);
@@ -512,12 +527,21 @@ public final class Main extends javax.swing.JFrame {
     private void lstSongsFoundMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lstSongsFoundMouseClicked
         txtChoosenSong.setText(readFile(theSongMap.get
             (lstSongsFound.getSelectedValue().toString())));
+        txtChoosenSong.setCaretPosition(0);
     }//GEN-LAST:event_lstSongsFoundMouseClicked
 
-    private void clearList(JList listToFill) {
+    /**
+     * clearList: is used to clear a jlist and a jtextarea or reuse
+     * 
+     * @param listToFill is the list to empty
+     * @param box is the text area to empty
+     */
+    private void clearList(JList listToFill, JTextArea box) {
         DefaultListModel listmodel = new DefaultListModel();
         listmodel.clear();
         listToFill.setModel(listmodel);
+        
+        box.setText("");
     }
     
     /**

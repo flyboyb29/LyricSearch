@@ -73,9 +73,10 @@ public class SongList implements Serializable {
     }
     
     /**
+     * hasSong: Returns if the word we are looking at contains a certain song.
      * 
-     * @param mySong
-     * @return 
+     * @param mySong The song that you are wondering about
+     * @return a boolean value based on whether the song has a word.
      */
     public boolean hasSong(String mySong) {
         return theSongs.containsKey(mySong);
