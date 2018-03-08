@@ -10,7 +10,12 @@ import java.util.Map;
  */
 public class SongList implements Serializable {
     
-    // a map from the song title that contains a certain word to the times it
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2276500223537206663L;
+
+	// a map from the song title that contains a certain word to the times it
     // appears and the probability that it will appear.
     private final Map<String, CountProb> theSongs;
     

@@ -15,7 +15,12 @@ import javafx.stage.Stage;
  */
 public class NLPMusicSearch extends Application implements Serializable{
     
-    @Override
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8391773235073071434L;
+
+	@Override
     public void start(Stage primaryStage) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

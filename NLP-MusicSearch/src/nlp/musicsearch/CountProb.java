@@ -7,7 +7,11 @@ import java.io.Serializable;
  * @author Jason Hall
  */
 public class CountProb implements Serializable {
-    //
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2086922328425537508L;
+	//
     private int myCount;
     //
     private double myProb;

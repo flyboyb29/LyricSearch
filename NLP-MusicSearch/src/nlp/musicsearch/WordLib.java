@@ -13,7 +13,11 @@ import java.util.Scanner;
 public class WordLib implements Serializable {
     
     
-    private StringBuilder sb;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -6457593418098410500L;
+	private StringBuilder sb;
     //
     private final Map<String, SongList> theNormWordInSong;
     //
@@ -169,6 +173,9 @@ public class WordLib implements Serializable {
         } catch (Exception e) {
             finished = false;
         }
+        
+        word.close();
+        
         return finished;
     }
 
